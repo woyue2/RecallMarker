@@ -1,0 +1,81 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* 顶部导航栏样式 */
+.topnav {
+    overflow: hidden;
+    background-color: #333;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 100;
+}
+
+.topnav a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.topnav a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.topnav .dropdown {
+    float: left;
+    overflow: hidden;
+}
+
+.topnav .dropdown .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.topnav .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* 左侧侧边栏样式 */
+.sidenav {
+    height: 100%;
+    width: 200px;
+    position: fixed;
+    z-index: 1;
+    top: 60px; /* 调整此值以适应顶部导航栏的高度 */
+    left: 0;
+    background-color: #f1f1f1;
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+.sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #000;
+    display: block;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+    background-color: #4CAF50;
+}
+
+/* 主要内容区域样式 */
+.main {
+    margin-left: 200px; /* 调整此值以适应侧边栏的宽度 */
+    padding: 0px 10px;
+}
+

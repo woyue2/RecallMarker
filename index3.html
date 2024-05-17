@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Side Nav and Top Menu Example</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<!-- 顶部导航栏 -->
+<div class="topnav">
+    <a href="#" class="dropdown">文件</a>
+    <div class="dropdown-content">
+        <a href="#">1</a>
+        <a href="#">2</a>
+        <a href="#">3</a>
+        <a href="#">4</a>
+    </div>
+    <a href="#" class="dropdown">查看</a>
+    <div class="dropdown-content">
+        <a href="#">1</a>
+        <a href="#">2</a>
+        <a href="#">3</a>
+        <a href="#">4</a>
+    </div>
+</div>
+
+<!-- 左侧侧边栏 -->
+<div class="sidenav">
+    <a href="#">侧边栏选项1</a>
+    <a href="#">侧边栏选项2</a>
+    <a href="#">侧边栏选项3</a>
+    <a href="#">侧边栏选项4</a>
+</div>
+
+<div class="main">
+    <h2>主要内容区域</h2>
+    <!-- 页面其他内容 -->
+</div>
+<script>
+    $(document).ready(function(){
+        $(".dropdown").click(function(event){
+            event.preventDefault(); // 阻止默认链接行为
+            $(this).next(".dropdown-content").slideToggle(); // 切换显示/隐藏下拉内容
+        });
+    });
+    </script>
+</body>
+</html>
