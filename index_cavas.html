@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Draw Line with Mouse Clicks</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="800" height="600"></canvas>
+    <!-- Removed the <img> tag since it's not used in this context -->
+
+    <script>
+        var canvas = document.getElementById('myCanvas');
+        var ctx = canvas.getContext('2d');
+        var isDrawing = false;
+        var startMouseX = 0;
+        var startMouseY = 0;
+        var endMouseX = 0;
+        var endMouseY = 0;
+
+        canvas.addEventListener('mousedown', startDraw, false);
+        canvas.addEventListener('mouseup', stopDraw, false);
+
+        function startDraw(e) {
+            isDrawing = true;
+            getMousePos(canvas, e);
+            ctx.beginPath();
+            ctx.moveTo(startMouseX, startMouseY);
+        }
+
+        function stopDraw(e) {
+            if (!isDrawing) return;
+            isDrawing = false;
+            getMousePos(canvas, e);
+            ctx.lineTo(endMouseX, endMouseY);
+            ctx.stroke();
+        }
+
+        function getMousePos(canvas, evt) {
+            var rect = canvas.getBoundingClientRect();
+            startMouseX = evt.clientX - rect.left;
+            startMouseY = evt.clientY - rect.top;
+            endMouseX = startMouseX; // Resetting for potential future use
+            endMouseY = startMouseY;
+        }
+    </script>
+</body>
+</html>
