@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>线条粗细调节示例</title>
+    <style>
+        #canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <p>当前线条粗细: <span id="lineWidthDisplay">10</span></p>
+    <button onclick="increaseLineWidth()">↑</button>
+    <button onclick="decreaseLineWidth()">↓</button>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let lineWidth = 10; // 默认线条粗细
+
+        function drawLine() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // 清除画布
+            ctx.lineWidth = lineWidth; // 设置当前线条粗细
+            ctx.beginPath();
+            ctx.moveTo(50, 200);
+            ctx.lineTo(350, 200);
+            ctx.stroke(); // 绘制线条
+            document.getElementById('lineWidthDisplay').innerText = lineWidth; // 更新显示的线条粗细
+        }
+
+        function increaseLineWidth() {
+            lineWidth++;
+            if (lineWidth > 50) lineWidth = 50; // 限制最大值
+            drawLine();
+        }
+
+        function decreaseLineWidth() {
+            lineWidth--;
+            if (lineWidth < 1) lineWidth = 1; // 限制最小值
+            drawLine();
+        }
+
+        // 初始化时绘制线条
+        drawLine();
+    </script>
+</body>
+</html>

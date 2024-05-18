@@ -1,0 +1,69 @@
+<!-- // 这里的实现是正确的，实际也是这样，源图为一个，合并的时候再合并，读和存都是php的post  -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Layer Example</title>
+    <style>
+        canvas { border: 1px solid black; margin: 10px;}
+    </style>
+</head>
+<body>
+
+<canvas id="originalCanvas" width="400" height="400"></canvas>
+<canvas id="mergedCanvas" width="400" height="400"></canvas>
+<button id="button_merge">merge</button>
+<script>
+    function captureLayer(canvas) {
+        return canvas.toDataURL();
+    }
+
+    function createNewLayerFromDataUrl(dataUrl, width, height) {
+        var newCanvas = document.createElement('canvas');
+        newCanvas.width = width;
+        newCanvas.height = height;
+        var ctxNew = newCanvas.getContext('2d');
+        var img = new Image();
+        img.onload = function() {
+            ctxNew.drawImage(img, 0, 0);
+        };
+        img.src = dataUrl;
+        return newCanvas;
+    }
+
+    function drawOnCanvas(ctx, text) {
+        ctx.font = '30px Arial';
+        ctx.fillText(text, 50, 100);
+    }
+
+    function mergeCanvases(canvases, destCanvas) {
+        var destCtx = destCanvas.getContext('2d');
+        canvases.forEach(function(canvas) {
+            destCtx.drawImage(canvas, 0, 0);
+        });
+    }
+
+    // 初始化原始画布并绘制内容
+    var originalCanvas = document.getElementById('originalCanvas');
+    var ctxOriginal = originalCanvas.getContext('2d');
+    drawOnCanvas(ctxOriginal, 'content Layer 1');
+
+    // 将原始画布内容保存为新图层
+    var layer1DataUrl = captureLayer(originalCanvas);
+    var newLayerCanvas = createNewLayerFromDataUrl(layer1DataUrl, originalCanvas.width, originalCanvas.height);
+
+    // 在新图层上继续绘图
+    var ctxNewLayer = newLayerCanvas.getContext('2d');
+    drawOnCanvas(ctxNewLayer, 'Layer 2');
+
+    // 合并图层到显示画布
+    var mergedCanvas = document.getElementById('mergedCanvas');
+    var allCanvases = [originalCanvas, newLayerCanvas];
+    // 这里的实现是正确的，实际也是这样，源图为一个，合并的时候再合并，读和存都是php的post 
+    document.getElementById("button_merge").addEventListener('click',()=>{
+        mergeCanvases(allCanvases, mergedCanvas);
+    })
+</script>
+
+</body>
+</html>

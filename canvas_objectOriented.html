@@ -1,0 +1,111 @@
+// 当长长见识
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>线条粗细调节示例</title>
+        <style>
+            #canvas {
+                border: 1px solid black;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas" width="400" height="400"></canvas>
+        <p>当前线条粗细: <span id="lineWidthDisplay">10</span></p>
+        <button onclick="increaseLineWidth()">↑</button>
+        <button onclick="decreaseLineWidth()">↓</button>
+    
+    <script>
+        class DrawingManager {
+            constructor(canvasId, exampleCanvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.exampleCanvas = document.getElementById(exampleCanvasId);
+                this.exampleCtx = this.exampleCanvas.getContext('2d');
+                this.isDrawing = false;
+                this.startMouseX = 0;
+                this.startMouseY = 0;
+                this.endMouseX = 0;
+                this.endMouseY = 0;
+                this.lineWidth = 10;
+
+                this.initEventListeners();
+                this.drawExampleLine();
+            }
+
+            initEventListeners() {
+                // 当长长见识
+                this.canvas.addEventListener('mousedown', this.startDraw.bind(this));
+                this.canvas.addEventListener('mousemove', this.drawIfDrawing.bind(this));
+                this.canvas.addEventListener('mouseup', this.stopDraw.bind(this));
+                document.getElementById('lineWidthControl').addEventListener('click', this.toggleLineWidth.bind(this));
+                document.getElementById('decreaseLineWidth').addEventListener('click', this.decreaseLineWidth.bind(this));
+                document.getElementById('increaseLineWidth').addEventListener('click', this.increaseLineWidth.bind(this));
+            }
+
+            drawExampleLine() {
+                this.exampleCtx.clearRect(0, 0, this.exampleCanvas.width, this.exampleCanvas.height);
+                this.exampleCtx.lineWidth = this.lineWidth;
+                this.exampleCtx.beginPath();
+                this.exampleCtx.moveTo(5, 50);
+                this.exampleCtx.lineTo(15, 50);
+                this.exampleCtx.stroke();
+                document.getElementById('lineWidthDisplay').innerText = this.lineWidth;
+            }
+
+            startDraw(e) {
+                this.isDrawing = true;
+                this.getMousePos(e);
+                this.ctx.beginPath();
+                this.ctx.lineWidth = this.lineWidth;
+                this.ctx.moveTo(this.startMouseX, this.startMouseY);
+            }
+
+            drawIfDrawing(e) {
+                if (this.isDrawing) {
+                    this.getMousePos(e);
+                    this.ctx.lineTo(this.endMouseX, this.endMouseY);
+                    this.ctx.stroke();
+                }
+            }
+
+            stopDraw(e) {
+                if (!this.isDrawing) return;
+                this.isDrawing = false;
+                this.getMousePos(e);
+                this.ctx.lineTo(this.endMouseX, this.endMouseY);
+                this.ctx.stroke();
+            }
+
+            getMousePos(evt) {
+                var rect = this.canvas.getBoundingClientRect();
+                this.startMouseX = evt.clientX - rect.left;
+                this.startMouseY = evt.clientY - rect.top;
+                this.endMouseX = this.startMouseX;
+                this.endMouseY = this.startMouseY;
+            }
+
+            toggleLineWidth() {
+                this.lineWidth = this.lineWidth === 2 ? 5 : 2;
+                this.drawExampleLine();
+            }
+
+            increaseLineWidth() {
+                this.lineWidth++;
+                if (this.lineWidth > 50) this.lineWidth = 50;
+                this.drawExampleLine();
+            }
+
+            decreaseLineWidth() {
+                this.lineWidth--;
+                if (this.lineWidth < 1) this.lineWidth = 1;
+                this.drawExampleLine();
+            }
+        }
+
+        // Initialize the drawing manager
+        const manager = new DrawingManager('myCanvas', 'egCanvas');
+    </script>
+</body>
+</html>

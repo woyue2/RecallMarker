@@ -1,0 +1,202 @@
+<!-- draw basic line 0517 -->
+<!-- control and preview stroke width 0518 -->
+<!-- color choice -->
+<!-- to save as new layer -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Draw Line with Mouse Clicks and Line Width Control</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+        #toggleDrawOrErase {
+            margin-top: 10px;
+        }
+        /* 添加颜色块样式 */
+        .color-block {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+</style>
+</head>
+<body>
+    <div id="colorPalette">
+        <!-- 这里动态生成颜色块，先用静态HTML展示示例 -->
+        <div class="color-block" style="background-color: #eccc68;"></div>
+        <div class="color-block" style="background-color: #ff7f50;"></div>
+        <div class="color-block" style="background-color: #ff6b81;"></div>
+        <div class="color-block" style="background-color: #a4b0be;"></div>
+        <div class="color-block" style="background-color: #ffa502;"></div>
+        <div class="color-block" style="background-color: #7bed9f;"></div>
+        <div class="color-block" style="background-color: #70a1ff;"></div>
+        <div class="color-block" style="background-color: #ffffff;"></div>
+        <div class="color-block" style="background-color: #dfe4ea;"></div>
+        <div class="color-block" style="background-color: #1e90ff;"></div>
+        <div class="color-block" style="background-color: #000000;"></div>
+    </div>
+    <canvas id="myCanvas" width="800" height="600"></canvas>
+    <button id="toggleDrawOrErase">toggleDrawOrErase</button>
+    <button id="clearAll">clearAll</button>
+    <p>当前线条粗细: <span id="lineWidthDisplay">10</span></p>
+    <canvas id="egCanvas" width="20" height="100"></canvas>
+    <button id="decreaseLineWidth">↓</button>
+    <button id="increaseLineWidth">↑</button>
+
+    <script>
+        // color design
+        var currentColor = '#000000'; // 默认颜色为黑色
+
+        // 为每个颜色块添加点击事件
+        document.querySelectorAll('#colorPalette .color-block').forEach(function(block) {
+            block.addEventListener('click', function() {
+                currentColor = this.style.backgroundColor;
+            });
+        });
+        var canvas = document.getElementById('myCanvas');
+        var ctx = canvas.getContext('2d'); // context abbrevaiate ctx
+        var isDrawing = false;
+        var startMouseX = 0;var startMouseY = 0;var endMouseX = 0;var endMouseY = 0;
+        var lineWidth = 10; // Default line width
+        var example_canvas = document.getElementById("egCanvas")
+        var isErasing = false;
+        var btn_clearAll = document.getElementById('clearAll');
+        let intervalId = null;
+        canvas.addEventListener('mousedown', startDraw, false);
+        canvas.addEventListener('mousemove', drawIfDrawing, false); // 添加mousemove事件监听
+        canvas.addEventListener('mouseup', stopDraw, false);
+        document.getElementById('toggleDrawOrErase').addEventListener('click', toggleEraser);
+        document.getElementById('decreaseLineWidth').addEventListener('mousedown', decreaseLineWidth);
+        document.getElementById('decreaseLineWidth').addEventListener('mouseup', () => clearInterval(intervalId));
+        document.getElementById('increaseLineWidth').addEventListener('mousedown', increaseLineWidth);
+        document.getElementById('increaseLineWidth').addEventListener('mouseup', () => clearInterval(intervalId));
+        btn_clearAll.addEventListener('click', clearCanvas.bind(null, canvas))
+        function toggleEraser() {
+            isErasing = !isErasing;
+            if (isErasing) {
+                eraseMode();
+                document.getElementById('toggleDrawOrErase').innerText = 'Erasing';
+            } else {
+                drawMode();
+                document.getElementById('toggleDrawOrErase').innerText = 'Drawing';
+            }
+        }
+        // this is example to show how the stroke width is
+        function clearCanvas(canvas){
+            let ctx = canvas.getContext('2d');
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+        }
+        function drawExapmleCanvas() {
+            var exampleCtx = example_canvas.getContext('2d'); // 获取example_canvas的上下文
+            exampleCtx.clearRect(0, 0, example_canvas.width, example_canvas.height); // 清除画布
+            exampleCtx.lineWidth = lineWidth; // 设置当前线条粗细
+            exampleCtx.beginPath();
+            exampleCtx.moveTo(5, 50);
+            exampleCtx.lineTo(15, 50);
+            exampleCtx.stroke(); // 绘制线条
+            document.getElementById('lineWidthDisplay').innerText = lineWidth; // 更新显示的线条粗细
+        }
+        drawExapmleCanvas()
+        function eraseMode() {
+            ctx.strokeStyle = '#ffffff';
+            ctx.globalCompositeOperation = "destination-out";
+        }
+
+        function drawMode() {
+            ctx.strokeStyle = currentColor;
+            ctx.globalCompositeOperation = "source-over";
+        }
+        function increaseLineWidth() {
+            clearInterval(intervalId); // 防止多个定时器叠加
+            intervalId = setInterval(() => {
+                lineWidth++;
+                if (lineWidth > 50) lineWidth = 50; // 限制最大值
+                document.getElementById('lineWidthDisplay').innerText = lineWidth;
+                drawExapmleCanvas();
+            }, 100); // 每100毫秒增加一次
+        }
+
+        function decreaseLineWidth() {
+            clearInterval(intervalId);
+            intervalId = setInterval(() => {
+                lineWidth--;
+                if (lineWidth < 1) lineWidth = 1; // 限制最小值
+                document.getElementById('lineWidthDisplay').innerText = lineWidth;
+                drawExapmleCanvas();
+            }, 100);
+        }
+
+        function startDraw(e) {
+            isDrawing = true;
+            if (isErasing) {
+                eraseMode(); // 如果处于擦除模式，则切换到擦除
+            } else {
+                drawMode(); // 否则保持绘制模式
+            }
+            getMousePos(canvas, e);
+            ctx.beginPath();
+            ctx.lineWidth = lineWidth; // Apply current line width
+            ctx.strokeStyle = currentColor; // 确保线条颜色随当前选择变化
+            ctx.moveTo(startMouseX, startMouseY);
+        }
+        function drawIfDrawing(e) {
+            if (isDrawing) {
+                getMousePos(canvas, e);
+                ctx.lineTo(endMouseX, endMouseY);
+                ctx.stroke();
+            }   
+        }
+        function stopDraw(e) {
+            if (!isDrawing) return;
+            isDrawing = false;
+            if (isErasing) {
+                eraseMode(); // 如果处于擦除模式，则切换到擦除
+            } else {
+                drawMode(); // 否则保持绘制模式
+            }
+            getMousePos(canvas, e);
+            ctx.lineTo(endMouseX, endMouseY);
+            ctx.stroke();
+        }
+
+        function getMousePos(canvas, evt) {
+            var rect = canvas.getBoundingClientRect();
+            startMouseX = evt.clientX - rect.left;
+            startMouseY = evt.clientY - rect.top;
+            endMouseX = startMouseX; 
+            endMouseY = startMouseY;
+        }
+        // modify this to numerical setting
+        function changeLineWidth() {
+            // Toggle between two different line widths for simplicity
+            lineWidth = lineWidth === 2 ? 5 : 2;
+        }
+
+        // function: save drawing as new layer
+        function captureLayer(canvas) {
+            return canvas.toDataURL(); // 返回当前画布内容的data URL
+        }
+        function createNewLayer(originalCanvas) {
+            var newCanvas = document.createElement('canvas');
+            newCanvas.width = originalCanvas.width;
+            newCanvas.height = originalCanvas.height;
+            var ctxNew = newCanvas.getContext('2d');
+            
+            // 使用之前捕获的数据填充新canvas作为新图层
+            var img = new Image();
+            img.onload = function() {
+                ctxNew.drawImage(img, 0, 0);
+            };
+            img.src = captureLayer(originalCanvas); // 使用原始画布内容初始化新图层
+
+            return newCanvas;
+        }
+
+    </script>
+</body>
+</html>
