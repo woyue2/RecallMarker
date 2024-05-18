@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Save Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- 引入jQuery简化AJAX调用 -->
+</head>
+<body>
+    <h2>画布示例</h2>
+    <canvas id="myCanvas" width="200" height="200" style="border:1px solid #000;"></canvas> <!-- 添加一些默认宽度和高度 -->
+    <button onclick="saveCanvas()">保存图片到服务器</button>
+</body>
+<script>
+    function saveCanvas() {
+        var canvas = document.getElementById('myCanvas');
+        var dataURL = canvas.toDataURL('image/png'); // 将Canvas转换为PNG格式的Base64编码
+        
+        $.ajax({ // 使用jQuery发送Ajax请求
+            type: 'POST',
+            url: 'saveCanvas.php',
+            data: { imageData: dataURL }, // 发送Base64编码的图像数据
+            success: function(response) {
+                alert(response); // 显示PHP脚本的响应
+            },
+            error: function(xhr, status, error) {
+                alert('Error: ' + error); // 如果有错误发生，显示错误信息
+            }
+        });
+    }
+</script>
+</html>
