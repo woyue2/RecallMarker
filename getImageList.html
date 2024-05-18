@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Selector with Navigation</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>Select an Image</h2>
+    <select id="imageSelector"></select>
+    <div id="navigation">
+        <button id="prevImage">↑</button>
+        <button id="nextImage">↓</button>
+    </div>
+    <canvas id="imageCanvas" width="400" height="300"></canvas>
+
+    <script>
+        $(document).ready(function() {
+            var currentImagePath = ''; // 初始化当前图片路径
+            var images = []; // 存储所有图片路径
+
+            // 加载图片列表
+            function loadImageList(directory) {
+                $.getJSON('getImageList.php', { path: directory }, function(data) {
+                    images = data.images; // 假设PHP返回的JSON数据有一个名为"images"的键
+                    updateImageSelector();
+                    if (images.length) {
+                        loadImage(images[0]); // 加载第一条图片
+                    }
+                });
+            }
+
+            // 更新图片选择器
+            function updateImageSelector() {
+                var $selector = $('#imageSelector');
+                $selector.empty(); // 清空现有选项
+                images.forEach(function(image, index) {
+                    $('<option>', { value: image, text: image }).appendTo($selector);
+                });
+                $selector.val(currentImagePath); // 设置当前选中的值
+            }
+
+            // 加载图片
+            function loadImage(path) {
+                if (path) {
+                    currentImagePath = path;
+                    var img = new Image();
+                    img.onload = function() {
+                        var canvas = $('#imageCanvas')[0];
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        var ctx = canvas.getContext('2d');
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0);
+                    };
+                    img.src = 'pic/' + path;
+                }
+            }
+
+            // 导航按钮点击事件处理
+            $('#prevImage, #nextImage').click(function() {
+                var currentIndex = images.indexOf(currentImagePath);
+                currentIndex = $(this).attr('id') === 'prevImage' ? currentIndex - 1 : currentIndex + 1;
+                if (currentIndex >= 0 && currentIndex < images.length) {
+                    loadImage(images[currentIndex]);
+                    $('#imageSelector').val(images[currentIndex]);
+                }
+            });
+
+            // 初始化加载根目录图片
+            loadImageList('');
+
+            // 选择器变化时加载新图片
+            $('#imageSelector').on('change', function() {
+                loadImage($(this).val());
+            });
+        });
+    </script>
+</body>
+</html>

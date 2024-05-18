@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Load Image into Canvas</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <canvas id="myCanvas" width="800" height="600"></canvas>
+    <button onclick="saveCanvas()">保存图片到服务器</button>
+    <div id="subFolderContainer" style="display:none;">
+        <select id="subImageSelect"></select>
+        <button id="prevSubImage">↑</button>
+        <button id="nextSubImage">↓</button>
+    </div>
+    <h2>请选择图片:</h2>
+    <select id="imageSelect">
+        <option value="1716005039.png">1716005039.png</option>
+        <option value="1716005050.png">1716005050.png</option>
+        <option value="1716005054.png">1716005054.png</option>
+        <option value="1716006056.png">1716006056.png</option>
+        <option value="1716006587.png">1716006587.png</option>
+        <option value="example.png" selected>example.png</option>
+    </select>
+    <br><br>
+
+    <script>
+        $(document).ready(function() {
+            var canvas = document.getElementById('myCanvas');
+            var ctx = canvas.getContext('2d');
+            var img = new Image();
+
+            function resizeCanvasToImage(img, maxWidth, maxHeight) {
+                let ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
+                canvas.width = img.width * ratio;
+                canvas.height = img.height * ratio;
+            }
+
+            // 事件处理函数，用于加载用户选择的图片
+            function loadImage() {
+                var imagePath = 'pic/' + $('#imageSelect').val(); // 获取用户选择的图片路径
+                img.onload = function() {
+                    resizeCanvasToImage(img, 800, 600);
+                    ctx.clearRect(0, 0, canvas.width, canvas.height); // 清除Canvas
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                };
+                img.src = imagePath;
+            }
+
+            // 首次加载默认图片
+            loadImage();
+
+            // 为下拉菜单添加事件监听器
+            $('#imageSelect').on('change', loadImage);
+            
+            // 保存Canvas到服务器的函数保持不变
+            function saveCanvas() {
+                var dataURL = canvas.toDataURL('image/png');
+                $.ajax({
+                    type: 'POST',
+                    url: 'saveCanvas.php',
+                    data: { imageData: dataURL },
+                    success: function(response) {
+                        alert(response);
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error: ' + error);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

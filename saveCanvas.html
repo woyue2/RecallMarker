@@ -17,7 +17,7 @@
         
         $.ajax({ // 使用jQuery发送Ajax请求
             type: 'POST',
-            url: 'saveCanvas.php',
+            url: 'saveCanvas.php', // 如果PHP和HTML在同一文件，这实际上不需要，但保持逻辑清晰
             data: { imageData: dataURL }, // 发送Base64编码的图像数据
             success: function(response) {
                 alert(response); // 显示PHP脚本的响应

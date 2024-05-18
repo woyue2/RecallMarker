@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Directory Contents</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h2>Directory Content:</h2>
+<ul id="contentList"></ul>
+
+<script>
+$(document).ready(function() {
+    $.getJSON('listContent.php', function(data) {
+        var contentList = $('#contentList');
+        $.each(data, function(index, item) {
+            var listItem = $('<li>');
+            if (item.type === 'folder') {
+                listItem.append('<span class="folder">' + item.name + '</span>');
+            } else if (item.type === 'image') {
+                listItem.append('<span class="image">' + item.name + '</span>');
+            }
+            contentList.append(listItem);
+        }).fail(function(jqxhr, textStatus, error) {
+            console.error("Failed to retrieve content: " + textStatus + ", " + error);
+        });
+    });
+});
+</script>
+
+<style>
+.folder { color: blue; }
+.image { color: green; }
+</style>
+
+</body>
+</html>
