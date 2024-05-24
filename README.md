@@ -3,8 +3,9 @@
 Install Xampp.
 
 # uploadpic , savepic
-# showpic, choosepic
+# choosepic, showpic
 # drawpiclayer, savepiclayer
+# choose layer, showlayer
 
 familiarr to the function, pls
 ![fpc.png](fpc.png)
